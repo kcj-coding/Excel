@@ -1,0 +1,55 @@
+Sub workbook_save()
+
+Dim ws As Worksheet
+Dim wb As Workbook
+
+Dim filename1 As String
+Dim outputname As String
+Dim lastrow As Long
+Dim lastrow2 As Long
+
+Set ws = ThisWorkbook.Sheets("Sheet1")
+filename1 = ws.Range("G1")
+outputname = ws.Range("G2").Value
+
+' clear any used range, but preserve formatting
+'ws.UsedRange.ClearContents
+
+' open linked workbook
+Set wb = Workbooks.Open(filename1) ' include folder location e.g. C:\\Folder\Excelfile.xlsx
+
+' copy and paste values
+wb.Sheets("Sheet1").Range("A:A").Copy
+'lastrow2 = wb.Sheets("Sheet1").Range("A" & Rows.Count).End(xlUp).Row
+'wb.Sheets("Sheet1").Range("A1:A" & lastrow2).Copy
+ws.Range("A1").PasteSpecial xlValues
+
+Application.CutCopyMode = False ' remove any items from clipboard
+
+' close open wb
+wb.Close (SaveChanges = False)
+
+' get the last row of pasted values
+lastrow = ws.Range("A" & Rows.Count).End(xlUp).Row
+
+'If lastrow <= 2 Then
+    'lastrow = 3
+'End If
+
+' in array, make new columns and values
+cols = Array("B", "C", "D")
+col_names = Array("Column1", "Column2", "Column3")
+
+For i = LBound(cols) To UBound(cols):
+    ws.Range(cols(i) & "2") = Application.WorksheetFunction.Sum(ws.Range("A:A"))
+    ws.Range(cols(i) & "1") = col_names(i)
+    
+    ' autofill formula
+    ws.Range(cols(i) & "2").AutoFill Destination:=Range(cols(i) & "2:" & cols(i) & lastrow)
+Next i
+
+' save file as
+'ThisWorkbook.SaveAs "C:\Users" & "\" & outputname ' this is e.g. "Macro.xlsm"
+ThisWorkbook.SaveAs Filename:="C:\Users" & "\" & outputname, FileFormat:=51 ' this is e.g. "Macro", FileFormat 51 is .xlsx, 52 is .xlsm, 56 is .xls, 50 is .xlsb
+
+End Sub
