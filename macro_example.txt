@@ -8,9 +8,16 @@ Dim outputname As String
 Dim lastrow As Long
 Dim lastrow2 As Long
 
+Application.ScreenUpdating = False
+
 Set ws = ThisWorkbook.Sheets("Sheet1")
 filename1 = ws.Range("G1")
 outputname = ws.Range("G2").Value
+
+' check if AutoSave available and turn off
+If Val(Application.Version) > 15 Then
+        ActiveWorkbook.AutoSaveOn = False
+    End If
 
 ' clear any used range, but preserve formatting
 'ws.UsedRange.ClearContents
@@ -48,8 +55,30 @@ For i = LBound(cols) To UBound(cols):
     ws.Range(cols(i) & "2").AutoFill Destination:=Range(cols(i) & "2:" & cols(i) & lastrow)
 Next i
 
+' format painter
+ws.Range("A1").Copy
+ws.Range("A2:A" & lastrow).PasteSpecial xlFormats
+
+
+' text to columns
+ws.Range("B:B").TextToColumns Destination:=ws.Range("D1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=False, _
+        Semicolon:=False, Comma:=False, Space:=False, Other:=True, OtherChar _
+        :="|", FieldInfo:=Array(1, 1), TrailingMinusNumbers:=True
+
+' autofilter - if off enable on selection
+If ActiveSheet.AutoFilterMode = False Then ws.Range("A1:C" & lastrow).AutoFilter
+
 ' save file as
 'ThisWorkbook.SaveAs "C:\Users" & "\" & outputname ' this is e.g. "Macro.xlsm"
 ThisWorkbook.SaveAs Filename:="C:\Users" & "\" & outputname, FileFormat:=51 ' this is e.g. "Macro", FileFormat 51 is .xlsx, 52 is .xlsm, 56 is .xls, 50 is .xlsb
+
+' check if AutoSave available and turn on
+If Val(Application.Version) > 15 Then
+        ActiveWorkbook.AutoSaveOn = True
+    End If
+    
+Application.ScreenUpdating = True
+MsgBox "Updated"
 
 End Sub
