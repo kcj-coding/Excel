@@ -1,0 +1,66 @@
+
+Sub combine_files()
+' credit to https://www.mrexcel.com/board/threads/need-vba-code-merge-all-excel-files-in-a-floder-to-a-new-excel-sheet.798526/
+Dim FileFold As String
+Dim FileSpec As String
+Dim FileName As String
+Dim ShtCnt As Long
+Dim RowCnt As Long
+Dim lastrow As Long
+Dim lastcol As Long
+Dim Merged As Workbook
+Dim wb As Workbook
+Dim ws As Worksheet
+
+'FileFold = "C:\Users\jsmith\Desktop" 'set the folder
+
+FileFold = ThisWorkbook.Sheets("Sheet1").Range("G5")
+
+FileSpec = FileFold & Application.PathSeparator & "*.xl*"
+FileName = Dir(FileSpec)
+
+'Exit if no files found
+If FileName = vbNullString Then
+    MsgBox Prompt:="No files were found that match " & FileSpec, Buttons:=vbCritical, Title:="Error"
+    Exit Sub
+End If
+
+With Application
+    .DisplayAlerts = False
+    .ScreenUpdating = False
+End With
+
+ShtCnt = 0
+RowCnt = 1
+
+Set Merged = Workbooks.Add
+
+Do While FileName <> vbNullString
+    ShtCnt = ShtCnt + 1
+    Set wb = Workbooks.Open(FileName:=FileFold & Application.PathSeparator & FileName, UpdateLinks:=False)
+    'Set ws = wb.Worksheets("Sheet1")
+    Set ws = wb.ActiveSheet
+    With ws
+        If .FilterMode Then .ShowAllData
+        If ShtCnt > 1 Then .Rows(1).EntireRow.Delete Shift:=xlUp
+        '.Range("A1").CurrentRegion.Copy Destination:=Merged.Worksheets(1).Cells(RowCnt, 1)
+        .UsedRange.Copy Destination:=Merged.Worksheets(1).Cells(RowCnt, 1)
+        lastrow = Merged.Worksheets(1).Range("A" & Rows.Count).End(xlUp).Row
+        lastcol = Merged.Worksheets(1).Cells(1, Columns.Count).End(xlToLeft).Column
+        For i = RowCnt To lastrow
+            Merged.Worksheets(1).Cells(i, lastcol) = FileName
+        Next i
+    End With
+    wb.Close SaveChanges:=False
+    RowCnt = Application.WorksheetFunction.CountA(Merged.Worksheets(1).Columns("A:A")) + 1
+    FileName = Dir
+Loop
+
+With Application
+    .DisplayAlerts = True
+    .ScreenUpdating = True
+End With
+
+MsgBox Prompt:="Finished merging.", Buttons:=vbInformation, Title:="Success"
+
+End Sub
