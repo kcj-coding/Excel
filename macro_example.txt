@@ -7,6 +7,7 @@ Dim filename1 As String
 Dim outputname As String
 Dim lastrow As Long
 Dim lastrow2 As Long
+Dim lastcol as Long
 
 Application.ScreenUpdating = False
 
@@ -28,6 +29,7 @@ Set wb = Workbooks.Open(filename1) ' include folder location e.g. C:\\Folder\Exc
 ' copy and paste values
 wb.Sheets("Sheet1").Range("A:A").Copy
 'lastrow2 = wb.Sheets("Sheet1").Range("A" & Rows.Count).End(xlUp).Row
+' lastcol = wb.Sheets("Sheet1").Cells(1, Columns.Count).End(xlToLeft).Column
 'wb.Sheets("Sheet1").Range("A1:A" & lastrow2).Copy
 ws.Range("A1").PasteSpecial xlValues
 

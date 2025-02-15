@@ -1,0 +1,102 @@
+Sub filter()
+
+Dim wb As Workbook
+Dim ws As Worksheet
+Dim ws1 As Worksheet
+Dim ws2 As Worksheet
+
+Dim lastrow As Long
+Dim lastrow2 As Long
+Dim lastcol as Long
+Dim lastcol_name as String
+
+
+Set ws = ThisWorkbook.Sheets("Sheet1") ' worksheet to paste data in to
+Set ws1 = ThisWorkbook.Sheets("Sheet2") ' the worksheet to contain the
+Set ws2 = ThisWorkbook.Sheets("Sheet3") ' the worksheet to contain the
+
+ws1.UsedRange.ClearContents
+ws2.UsedRange.ClearContents
+
+lastrow = ws.Range("A" & Rows.Count).End(xlUp).Row
+lastrow2 = ws1.Range("A" & Rows.Count).End(xlUp).Row
+lastcol = ws.Cells(1, Columns.Count).End(xlToLeft).Column
+lastcol_name = ws.Cells(1, lastcol).Address(True, False)
+lastcol_name = Split(lastcol_name, "$")(0)
+
+ranger = "A1:" & lastcol_name
+
+' want to autofilter the selection, remove blanks
+' autofilter - if off enable on selection
+If ActiveSheet.AutoFilterMode = False Then
+    ws.Range(ranger & lastrow).AutoFilter
+Else
+    ws.Range(ranger & lastrow).AutoFilter
+    ws.Range(ranger & lastrow).AutoFilter
+    'MsgBox "Remove existing filter"
+    'Exit Sub
+End If
+
+
+'ws.Range(ranger & lastrow).AutoFilter Field:=2, Criteria1:="<>" ' not blank
+'ws.Range(ranger & lastrow).AutoFilter Field:=2, Criteria1:="=" ' blank
+
+' for each column in range, ensure that every column before it is blank, and the column of interest is not blank
+For i = 2 To lastcol - 1: ' start at column 2 to not filter on column a
+    If i > 2 Then
+        For ii = 2 To i:
+            ws.Range(ranger & lastrow).AutoFilter Field:=ii, Criteria1:="=" ' blank
+        Next ii
+    End If
+    ws.Range(ranger & lastrow).AutoFilter Field:=i, Criteria1:="<>" ' not blank
+    ' copy and paste this data into sheet2
+    lastrowxta = ws.Range("A" & Rows.Count).End(xlUp).Row - 1
+    lastrow2 = ws1.Range("A" & Rows.Count).End(xlUp).Row + 1
+    ws.Range("A2:A" & lastrow).Copy
+    ws1.Range("A" & lastrow2).PasteSpecial xlValues
+    lastrowxta1 = ws1.Range("A" & Rows.Count).End(xlUp).Row
+    ' copy the value from the column and autofill down the pasted area
+        If lastrow2 > 1 Then
+            lnk = ws.Cells(1, i).Copy
+            ws1.Range("B" & lastrow2).PasteSpecial xlValues
+            'ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2).AutoFill Destination:=ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2 & ":" & "B" & lastrow2 + lastrowxta)
+        If lastrowxta1 <> lastrow2 Then
+            ws1.Range("B" & lastrow2).AutoFill Destination:=ws1.Range("B" & lastrow2 & ":" & "B" & lastrowxta1), Type:=xlFillCopy
+        End If
+        End If
+Next i
+ws.Range(ranger & lastrow).AutoFilter
+    
+ws.Range(ranger & lastrow).AutoFilter
+' for every column in range, make sure every column before it is not blank, and every column after it is blank
+For i = 2 To lastcol - 1: ' start at column 2 to not filter on column a
+    If i > 2 Then
+        For ii = 2 To i:
+            ws.Range(ranger & lastrow).AutoFilter Field:=ii, Criteria1:="<>" ' not blank
+        Next ii
+    End If
+    ws.Range(ranger & lastrow).AutoFilter Field:=i, Criteria1:="=" ' blank
+    ' and every next column blank to last column -1
+    For iii = i + 1 To lastcol - 2:
+        ws.Range(ranger & lastrow).AutoFilter Field:=iii, Criteria1:="=" ' blank
+    Next iii
+    ' copy and paste this data into sheet2
+    lastrowxta = ws.Range("A" & Rows.Count).End(xlUp).Row - 1
+    lastrow2 = ws2.Range("A" & Rows.Count).End(xlUp).Row + 1
+    ws.Range("A2:A" & lastrow).Copy
+    ws2.Range("A" & lastrow2).PasteSpecial xlValues
+    lastrowxta1 = ws2.Range("A" & Rows.Count).End(xlUp).Row
+    ' copy the value from the column and autofill down the pasted area
+    If lastrow2 > 1 Then
+        lnk = ws.Cells(1, i).Copy
+        ws2.Range("B" & lastrow2).PasteSpecial xlValues
+        'ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2).AutoFill Destination:=ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2 & ":" & "B" & lastrow2 + lastrowxta)
+    If lastrowxta1 <> lastrow2 Then
+        ws2.Range("B" & lastrow2).AutoFill Destination:=ws2.Range("B" & lastrow2 & ":" & "B" & lastrowxta1), Type:=xlFillCopy
+    End If
+    End If
+Next i
+ws.Range(ranger & lastrow).AutoFilter
+
+
+End Sub
