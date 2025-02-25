@@ -54,6 +54,7 @@ For i = 2 To lastcol - 1: ' start at column 2 to not filter on column a
     lastrow2 = ws1.Range("A" & Rows.Count).End(xlUp).Row + 1
     ws.Range("A2:A" & lastrow).Copy
     ws1.Range("A" & lastrow2).PasteSpecial xlValues
+    Application.CutCopyMode = False
     lastrowxta1 = ws1.Range("A" & Rows.Count).End(xlUp).Row
     ' copy the value from the column and autofill down the pasted area
         If lastrow2 > 1 Then
@@ -86,6 +87,7 @@ For i = 2 To lastcol - 1: ' start at column 2 to not filter on column a
     lastrow2 = ws2.Range("A" & Rows.Count).End(xlUp).Row + 1
     ws.Range("A2:A" & lastrow).Copy
     ws2.Range("A" & lastrow2).PasteSpecial xlValues
+    Application.CutCopyMode = False
     lastrowxta1 = ws2.Range("A" & Rows.Count).End(xlUp).Row
     ' copy the value from the column and autofill down the pasted area
     If lastrow2 > 1 Then
