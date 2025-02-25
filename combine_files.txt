@@ -45,6 +45,7 @@ Do While FileName <> vbNullString
         If ShtCnt > 1 Then .Rows(1).EntireRow.Delete Shift:=xlUp
         '.Range("A1").CurrentRegion.Copy Destination:=Merged.Worksheets(1).Cells(RowCnt, 1)
         .UsedRange.Copy Destination:=Merged.Worksheets(1).Cells(RowCnt, 1)
+        Application.CutCopyMode = False
         lastrow = Merged.Worksheets(1).Range("A" & Rows.Count).End(xlUp).Row
         lastcol = Merged.Worksheets(1).Cells(1, Columns.Count).End(xlToLeft).Column
         For i = RowCnt To lastrow

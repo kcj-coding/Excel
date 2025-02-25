@@ -59,6 +59,7 @@ For i = 2 To lastcol - 1: ' start at column 2 to not filter on column a
         If lastrow2 > 1 Then
             lnk = ws.Cells(1, i).Copy
             ws1.Range("B" & lastrow2).PasteSpecial xlValues
+            Application.CutCopyMode = False
             'ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2).AutoFill Destination:=ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2 & ":" & "B" & lastrow2 + lastrowxta)
         If lastrowxta1 <> lastrow2 Then
             ws1.Range("B" & lastrow2).AutoFill Destination:=ws1.Range("B" & lastrow2 & ":" & "B" & lastrowxta1), Type:=xlFillCopy
@@ -90,6 +91,7 @@ For i = 2 To lastcol - 1: ' start at column 2 to not filter on column a
     If lastrow2 > 1 Then
         lnk = ws.Cells(1, i).Copy
         ws2.Range("B" & lastrow2).PasteSpecial xlValues
+        Application.CutCopyMode = False
         'ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2).AutoFill Destination:=ThisWorkbook.Sheets("Sheet2").Range("B" & lastrow2 & ":" & "B" & lastrow2 + lastrowxta)
     If lastrowxta1 <> lastrow2 Then
         ws2.Range("B" & lastrow2).AutoFill Destination:=ws2.Range("B" & lastrow2 & ":" & "B" & lastrowxta1), Type:=xlFillCopy
